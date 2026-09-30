@@ -1,0 +1,137 @@
+openapi: 3.0.3
+info:
+  title: Order API
+  version: 1.0.0
+paths:
+  # TODO: OrderApi has no Spring mapping annotations; confirm these conventional routes and verbs.
+  /orders:
+    get:
+      summary: List orders
+      # TODO: No JavaDoc defines this endpoint's summary or HTTP behavior.
+      operationId: listOrders
+      responses:
+        '200':
+          description: Orders returned successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Bad request
+          # TODO: The code defines no client-error status or error response contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create an order for a customer.
+      operationId: createOrder
+      requestBody:
+        required: true
+        # TODO: The Java method does not define request-body requiredness or field validation.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: Order created
+          # TODO: The method returns an OrderDto but does not define the HTTP status code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Invalid order request
+          # TODO: The code does not define validation or 4xx behavior.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /orders/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Order identifier
+        schema:
+          type: string
+    get:
+      summary: Get an order by ID
+      # TODO: No JavaDoc defines this endpoint's summary or HTTP behavior.
+      operationId: getOrder
+      responses:
+        '200':
+          description: Order returned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderDto'
+        '400':
+          description: Invalid order identifier
+          # TODO: The code defines no identifier validation or error response contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          # TODO: The method returns Optional.empty; the HTTP status mapping is unspecified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Cancel an order
+      # TODO: No JavaDoc defines this endpoint's summary or HTTP behavior.
+      operationId: cancelOrder
+      responses:
+        '200':
+          description: Cancellation result
+          # TODO: Confirm the HTTP response mapping for the boolean method result.
+          content:
+            application/json:
+              schema:
+                type: boolean
+                description: True if cancelled; false if missing or already cancelled.
+        '400':
+          description: Invalid order identifier
+          # TODO: The code defines no identifier validation or error response contract.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Order not found
+          # TODO: The method returns false for a missing order; whether this maps to 404 is unspecified.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    OrderDto:
+      type: object
+      properties:
+        id:
+          type: string
+        customerId:
+          type: string
+        amount:
+          type: number
+        status:
+          type: string
+    CreateOrderRequest:
+      type: object
+      properties:
+        customerId:
+          type: string
+        amount:
+          type: number
+      # TODO: Nullability, required fields, currency, and amount constraints are unspecified.
+    ErrorResponse:
+      type: object
+      description: Error response
+      additionalProperties: true
